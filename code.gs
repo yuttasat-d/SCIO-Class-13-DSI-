@@ -295,18 +295,33 @@ function handleMessage(event) {
   const userMsg = event.message.text.trim();
   const replyToken = event.replyToken;
 
-  // ตรวจจับคำสั่ง "พสพ"
+  // 1. คำสั่งจาก Rich Menu 
+  if (userMsg === 'วิธีค้นหาเพื่อน') {
+    const helpText = `📌 วิธีค้นหาข้อมูลทำเนียบรุ่น\n\nกรุณาพิมพ์คำว่า "พสพ " (มีเว้นวรรค 1 ครั้ง) แล้วตามด้วยชื่อ, ชื่อเล่น, หรือสังกัดที่ต้องการค้นหา \n\n💡 ตัวอย่างการค้นหา:\nพสพ สมชาย\nพสพ เทคโน\nพสพ นก`;
+    replyText(replyToken, helpText);
+    return;
+  }
+
+  // ==========================================
+  // [เพิ่มใหม่] 2. คำสั่งสุ่มผู้โชคดี (Lucky Draw)
+  // ==========================================
+  if (userMsg === 'สุ่มชื่อ' || userMsg === 'สุ่มผู้โชคดี') {
+    randomLuckyDraw(replyToken);
+    return;
+  }
+
+  // 3. คำสั่งค้นหารายชื่อของจริง (ของเดิม)
   if (userMsg.startsWith('พสพ ')) {
     const keyword = userMsg.substring(4).trim(); 
     if (keyword.length === 0) return;
 
     const result = searchMemberForBot(keyword);
-    
     if (result) {
       replyFlexMessage(replyToken, result);
     } else {
       replyText(replyToken, 'ไม่พบข้อมูลของ "' + keyword + '"');
     }
+    return;
   }
 }
 
@@ -526,14 +541,12 @@ function replyFlexMessage(replyToken, members) {
 // --- ฟังก์ชันบันทึก Group ID อัตโนมัติ ---
 function saveGroupIdToSheet(groupId) {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
-  let sheet = ss.getSheetByName("Config"); // ชื่อ Sheet ที่เราเพิ่งสร้าง
+  let sheet = ss.getSheetByName("Config"); 
   if (!sheet) {
-    // ถ้ายังไม่มี ให้สร้างใหม่เลย
     sheet = ss.insertSheet("Config");
     sheet.appendRow(["GroupID", "GroupName"]);
   }
 
-  // ดึงข้อมูลเก่ามาเช็คว่ามี ID นี้หรือยัง
   const data = sheet.getDataRange().getValues();
   let exists = false;
   
@@ -544,9 +557,121 @@ function saveGroupIdToSheet(groupId) {
     }
   }
 
-  // ถ้ายังไม่มี ให้บันทึกเพิ่ม
   if (!exists) {
     sheet.appendRow([groupId, "กลุ่มใหม่ (รอแก้ไขชื่อ)"]);
     console.log("บันทึกกลุ่มใหม่เรียบร้อย: " + groupId);
+  }
+}
+
+// ==========================================
+// ส่วนฟังก์ชัน: ระบบสุ่มรายชื่อ (Lucky Draw)
+// ==========================================
+
+function randomLuckyDraw(replyToken) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let sheet = ss.getSheetByName(SHEET_NAME);
+  if (!sheet) sheet = ss.getSheets()[0];
+  
+  const data = sheet.getDataRange().getDisplayValues(); 
+  
+  // กรองเอารายชื่อที่มีอยู่จริง (ข้ามแถวแรกที่เป็นหัวตาราง และแถวที่ไม่มีชื่อ)
+  let validMembers = [];
+  for (let i = 1; i < data.length; i++) {
+    let name = data[i][1];
+    if (name && name.toString().trim() !== "") {
+      validMembers.push(data[i]);
+    }
+  }
+
+  // ถ้าไม่มีข้อมูลเลย
+  if (validMembers.length === 0) {
+    replyText(replyToken, "ยังไม่มีรายชื่อสมาชิกในระบบครับ");
+    return;
+  }
+
+  // สุ่มตัวเลข Index จาก Array
+  const randomIndex = Math.floor(Math.random() * validMembers.length);
+  const winner = validMembers[randomIndex];
+
+  // ดึงข้อมูลผู้ชนะ
+  const winnerData = {
+    name: winner[1],
+    nickname: winner[2] ? winner[2] : '-',
+    position: winner[3] ? winner[3] : '-',
+    dept: winner[4] ? winner[4] : 'ไม่ระบุสังกัด'
+  };
+
+  // ส่งผลลัพธ์เป็น Flex Message แจ้งผู้โชคดี
+  replyLuckyDrawFlex(replyToken, winnerData);
+}
+
+// ฟังก์ชันสร้างการ์ดประกาศรางวัล (Flex Message)
+function replyLuckyDrawFlex(replyToken, data) {
+  const payload = {
+    "replyToken": replyToken,
+    "messages": [{
+      "type": "flex",
+      "altText": "🎉 ประกาศรายชื่อผู้โชคดี!",
+      "contents": {
+        "type": "bubble",
+        "size": "mega",
+        "header": {
+          "type": "box",
+          "layout": "vertical",
+          "contents": [
+            { "type": "text", "text": "🎉 ผู้โชคดี ได้แก่... 🎉", "color": "#ffffff", "weight": "bold", "size": "xl", "align": "center" }
+          ],
+          "backgroundColor": "#FFC107" // สีทองเหลือง
+        },
+        "body": {
+          "type": "box",
+          "layout": "vertical",
+          "contents": [
+            { "type": "text", "text": "🎯", "size": "3xl", "align": "center", "margin": "md" },
+            { "type": "text", "text": data.name, "weight": "bold", "size": "xxl", "align": "center", "color": "#1e3c72", "wrap": true, "margin": "md" },
+            { "type": "text", "text": "ชื่อเล่น: " + data.nickname, "size": "md", "align": "center", "color": "#555555", "margin": "sm" },
+            { "type": "separator", "margin": "xl" },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "margin": "lg",
+              "spacing": "sm",
+              "contents": [
+                {
+                  "type": "box", "layout": "baseline",
+                  "contents": [
+                    { "type": "text", "text": "สังกัด", "color": "#aaaaaa", "size": "sm", "flex": 2 },
+                    { "type": "text", "text": data.dept, "wrap": true, "color": "#666666", "size": "sm", "flex": 5 }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "footer": {
+          "type": "box",
+          "layout": "vertical",
+          "contents": [
+            { "type": "text", "text": "ยินดีด้วยครับ! 🥳", "align": "center", "color": "#aaaaaa", "size": "sm" }
+          ]
+        },
+        "styles": { "header": { "backgroundColor": "#ffb300" } }
+      }
+    }]
+  };
+  
+  const options = {
+    'method': 'post',
+    'headers': {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + CHANNEL_ACCESS_TOKEN
+    },
+    'payload': JSON.stringify(payload)
+  };
+
+  try {
+      UrlFetchApp.fetch('https://api.line.me/v2/bot/message/reply', options);
+  } catch (e) {
+      console.log("Error sending Lucky Draw Flex: " + e);
   }
 }
