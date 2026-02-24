@@ -305,7 +305,7 @@ function handleMessage(event) {
   // ==========================================
   // [เพิ่มใหม่] 2. คำสั่งสุ่มผู้โชคดี (Lucky Draw)
   // ==========================================
-  if (userMsg === 'สุ่มชื่อ' || userMsg === 'สุ่มผู้โชคดี') {
+  if (userMsg === 'สุ่ม' || userMsg === 'สุ่มชื่อ') {
     randomLuckyDraw(replyToken);
     return;
   }
@@ -619,7 +619,7 @@ function replyLuckyDrawFlex(replyToken, data) {
           "type": "box",
           "layout": "vertical",
           "contents": [
-            { "type": "text", "text": "🎉 ผู้โชคดี ได้แก่... 🎉", "color": "#ffffff", "weight": "bold", "size": "xl", "align": "center" }
+            { "type": "text", "text": "🎉 สมาชิกผู้โชคดี คือ 🎉", "color": "#ffffff", "weight": "bold", "size": "xl", "align": "center" }
           ],
           "backgroundColor": "#FFC107" // สีทองเหลือง
         },
