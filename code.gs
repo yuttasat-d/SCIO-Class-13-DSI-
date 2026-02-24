@@ -629,7 +629,7 @@ function replyLuckyDrawFlex(replyToken, data) {
           "contents": [
             { "type": "text", "text": "🎯", "size": "3xl", "align": "center", "margin": "md" },
             { "type": "text", "text": data.name, "weight": "bold", "size": "xxl", "align": "center", "color": "#1e3c72", "wrap": true, "margin": "md" },
-            { "type": "text", "text": "ชื่อเล่น: " + data.nickname, "size": "md", "align": "center", "color": "#555555", "margin": "sm" },
+            { "type": "text", "text": "(" + data.nickname + ")", "size": "md", "align": "center", "color": "#555555", "margin": "sm" },
             { "type": "separator", "margin": "xl" },
             {
               "type": "box",
