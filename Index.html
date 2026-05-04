@@ -1,519 +1,626 @@
 <!DOCTYPE html>
 <html lang="th">
-  <head>
-    <base target="_top">
+<head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ทำเนียบรุ่น พสพ.13</title>
-    <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/6/6f/Seal_of_the_Department_of_Special_Investigation.png">
-    
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="referrer" content="no-referrer">
+    <title>ระบบโหวตรางวัลที่สุดประจำรุ่น พสพ.13</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    <style>
-      :root { --primary-color: #1e3c72; --secondary-color: #2a5298; --bg-color: #f8f9fa; }
-      body { font-family: 'Sarabun', sans-serif; background-color: var(--bg-color); color: #333; }
-      
-      .header-bg {
-        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-        color: white; padding: 30px 15px 80px; border-radius: 0 0 30px 30px;
-        position: relative; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center;
-      }
-      .logo-img { height: 70px; width: auto; display: block; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); margin: 0 auto 10px; }
-      
-      .search-wrapper { position: sticky; top: 0; z-index: 1020; padding: 10px 15px; margin-top: -60px; }
-      .search-box { max-width: 600px; margin: 0 auto; background: rgba(255,255,255,0.95); backdrop-filter: blur(5px); padding: 15px; border-radius: 20px; box-shadow: 0 8px 32px rgba(31,38,135,0.15); }
-      .search-input { border-radius: 50px; padding: 12px 25px; border: 1px solid #e0e0e0; width: 100%; font-size: 1.1rem; padding-left: 45px; }
-      .search-input:focus { outline: none; border-color: var(--secondary-color); box-shadow: 0 0 0 4px rgba(42,82,152,0.1); }
-      .fa-search { position: absolute; left: 30px; top: 28px; color: #aaa; }
-
-      .dept-header { display: flex; align-items: center; margin: 30px 0 15px; padding-bottom: 8px; border-bottom: 2px solid #e9ecef; }
-      .dept-title { color: var(--primary-color); font-weight: 700; font-size: 1.3rem; margin-right: 10px; }
-      .dept-badge { background-color: var(--secondary-color); color: white; padding: 2px 10px; border-radius: 12px; font-size: 0.8rem; }
-
-      .member-card { background: white; border-radius: 16px; padding: 20px; height: 100%; box-shadow: 0 2px 8px rgba(0,0,0,0.04); position: relative; display: flex; flex-direction: column; justify-content: space-between; transition: 0.2s; border-left: 5px solid var(--primary-color); }
-      .member-card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.08); }
-      .edit-icon { position: absolute; top: 15px; right: 15px; color: #ced4da; cursor: pointer; z-index: 5; }
-      .edit-icon:hover { color: var(--secondary-color); transform: scale(1.1); }
-
-      .member-name { font-size: 1.15rem; font-weight: 700; color: var(--primary-color); margin-bottom: 0px; padding-right: 20px; }
-      .member-nick { display: inline-block; font-weight: 500; font-size: 0.95em; color: #555; margin-left: 5px; }
-      .member-pos { color: #6c757d; font-size: 0.9rem; margin-bottom: 10px; margin-top: 5px; }
-      
-      /* ปรับแต่งป้ายวันเกิด */
-      .bd-badge { 
-        font-size: 0.85rem; 
-        background-color: #fff3cd; 
-        color: #856404; 
-        padding: 4px 10px; 
-        border-radius: 20px; 
-        display: inline-block; 
-        margin-top: 5px; 
-        border: 1px solid #ffeeba;
-      }
-
-      .card-footer-custom { border-top: 1px solid #f1f3f5; padding-top: 12px; display: flex; justify-content: flex-end; gap: 8px; margin-top: 15px; }
-      .btn-icon { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; transition: 0.2s; }
-      .btn-phone { background: #f0f7ff; color: #0d6efd; } .btn-line { background: #f0fff4; color: #198754; } .btn-email { background: #fff8f0; color: #fd7e14; }
-      .btn-icon:hover { transform: scale(1.1); filter: brightness(0.95); }
-
-      .fab-add { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; background: var(--primary-color); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 4px 20px rgba(30,60,114,0.4); cursor: pointer; z-index: 2000; transition: transform 0.3s; }
-      .fab-add:hover { transform: scale(1.1) rotate(90deg); background: var(--secondary-color); }
-      
-      .loader { border: 4px solid #f3f3f3; border-top: 4px solid var(--primary-color); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 40px auto; }
-      @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    </style>
-  </head>
-  <body>
-
-    <div class="header-bg">
-      <div class="container">
-        <img src="https://www.dsi.go.th/images/logo-text-dsi.png" alt="DSI Logo" class="logo-img">
-        <h3 class="fw-bold mb-0">ทำเนียบรุ่น พสพ.13</h3>
-        <small class="text-white-50">DSI - Special Case Inquiry Official - Class 13</small>
-      </div>
-    </div>
-
-    <div class="search-wrapper">
-      <div class="search-box">
-        <div class="position-relative">
-          <i class="fas fa-search"></i>
-          <input type="text" id="searchInput" class="search-input" placeholder="ค้นหา ชื่อ, ชื่อเล่น, สังกัด..." onkeyup="filterData()">
-        </div>
-      </div>
-    </div>
-
-    <div class="container pb-5" style="margin-top: 20px;">
-      <div id="loader" class="loader"></div>
-      <div id="contentArea"></div>
-      <div id="noResults" class="text-center mt-5" style="display:none;">
-        <h5 class="text-muted">ไม่พบข้อมูล</h5>
-      </div>
-    </div>
-
-    <div class="fab-add" onclick="openModal()" title="เพิ่มรายชื่อ"><i class="fas fa-plus"></i></div>
-
-    <div class="modal fade" id="dataModal" tabindex="-1">
-      <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content border-0 shadow-lg">
-          <div class="modal-header bg-light">
-            <h5 class="modal-title fw-bold" id="modalTitle">จัดการข้อมูล</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-          </div>
-          <div class="modal-body p-4">
-            <form id="memberForm" onsubmit="handleFormSubmit(event)">
-              <input type="hidden" id="recId" name="recId">
-              <div class="row g-3">
-                <div class="col-12 col-md-8">
-                  <label class="form-label small fw-bold text-muted">ชื่อ-นามสกุล *</label>
-                  <input type="text" class="form-control" id="name" name="name" required>
-                </div>
-                <div class="col-12 col-md-4">
-                  <label class="form-label small fw-bold text-muted">ชื่อเล่น</label>
-                  <input type="text" class="form-control" id="nickname" name="nickname">
-                </div>
-                <div class="col-12 col-md-6">
-                  <label class="form-label small fw-bold text-muted">ตำแหน่ง</label>
-                  <input type="text" class="form-control" id="position" name="position" value="พนักงานสอบสวนคดีพิเศษชำนาญการ">
-                </div>
-                <div class="col-12 col-md-6">
-                  <label class="form-label small fw-bold text-muted">สังกัด</label>
-                  <select class="form-select" id="dept" name="dept">
-                    <option value="" selected disabled>-- เลือกสังกัด --</option>
-                  </select>
-                </div>
-                <div class="col-12 col-md-4">
-                    <label class="form-label small fw-bold text-muted">วันเดือนปีเกิด</label>
-                    <input type="date" class="form-control" id="birthdate" name="birthdate">
-                </div>
-              </div>
-              <div class="bg-light p-3 rounded mt-4 border">
-                <label class="d-block small fw-bold text-primary mb-2">ช่องทางติดต่อ</label>
-                <div class="row g-3">
-                  <div class="col-12 col-md-4">
-                    <input type="tel" class="form-control" id="phone" name="phone" placeholder="เบอร์โทรศัพท์">
-                  </div>
-                  <div class="col-12 col-md-4">
-                    <input type="text" class="form-control" id="lineId" name="lineId" placeholder="Line ID">
-                  </div>
-                  <div class="col-12 col-md-4">
-                    <input type="email" class="form-control" id="email" name="email" placeholder="E-mail">
-                  </div>
-                </div>
-              </div>
-              <div class="d-flex gap-2 mt-4 pt-2">
-                <button type="submit" id="btnSave" class="btn btn-primary flex-grow-1 rounded-pill">บันทึกข้อมูล</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script>
-      let allData = [];
-      let dataModal;
-
-      const deptOptions = [
-        "สำนักงานอธิบดีกรมสอบสวนคดีพิเศษ (สนง.อสพ.)",
-        "สำนักงานรองอธิบดีกรมสอบสวนคดีพิเศษ (สนง.รองฯ 1)",
-        "สำนักงานรองอธิบดีกรมสอบสวนคดีพิเศษ (สนง.รองฯ 2)",
-        "สำนักงานรองอธิบดีกรมสอบสวนคดีพิเศษ (สนง.รองฯ 3)",
-        "สำนักงานรองอธิบดีกรมสอบสวนคดีพิเศษ (สนง.รองฯ 4)",
-        "สำนักงานผู้เชี่ยวชาญเฉพาะด้านคดีพิเศษ (สนง.ชช)",
-        "กองกิจการต่างประเทศและคดีอาชญกรรมระหว่างประเทศ (กตท.)",
-        "กองคดีเทคโนโลยีและสารสนเทศ (กคท.)",
-        "กองคดีการเงินการธนาคารและการฟอกเงิน (กคง.)",
-        "กองคดีความมั่นคง (กมค.)",
-        "กองคดีทรัพยากรธรรมชาติและสิ่งแวดล้อม (กคส.)",
-        "กองคดีทรัพย์สินทางปัญญา (กคป.)",
-        "กองคดีภาษีอากร (กคภ.)",
-        "กองปฏิบัติการคดีพิเศษภาค (กปภ.)",
-        "กองเทคโนโลยีและศูนย์ข้อมูลการตรวจสอบ (กทศ.)",
-        "กองนโยบายและยุทธศาสตร์ (กนย.)",
-        "กองคดีธุรกิจการเงินนอกระบบ (กคธ.)",
-        "กองคดีความผิดเกี่ยวกับการเสนอราคาต่อหน่วยงานของรัฐ (กคร.)",
-        "กองคดีคุ้มครองผู้บริโภค (กคบ.)",
-        "กองปฏิบัติการพิเศษ (กปพศ.)",
-        "สำนักงานเลขานุการกรม (สลก.)",
-        "กองพัฒนาและสนับสนุนคดีพิเศษ (กพน.)",
-        "กองกฎหมาย (กกม.)",
-        "กองบริหารคดีพิเศษ (กบพ.)",
-        "กองคดีการค้ามนุษย์ (กคม.)",
-        "ศูนย์สืบสวนสะกดรอยและการข่าว",
-        "กลุ่มบริหารทรัพยากรบุคคล (กบค.)",
-        "กลุ่มค่าใช้จ่ายคดีพิเศษ (กงพ.)",
-        "กลุ่มตรวจสอบภายใน (กตน.)",
-        "กลุ่มพัฒนาระบบบริหาร (กพร.)",
-        "ศูนย์ช่วยเหลือลูกหนี้และประชาชนที่ไม่ได้รับความเป็นธรรม",
-        "กองกิจการอำนวยความยุติธรรม (กอธ.)",
-        "กองคดีการฟอกเงินทางอาญา (กคฟ.)",
-        "ส่วนคดีละเมิดทางเพศเด็ก (คด.)",
-        "กองคดียาเสพติด (กยส.)",
-        "ศูนย์ปฏิบัติการคดีพิเศษเขตพื้นที่ 1 (อยุธยา)",
-        "ศูนย์ปฏิบัติการคดีพิเศษเขตพื้นที่ 2 (ชลบุรี)",
-        "ศูนย์ปฏิบัติการคดีพิเศษเขตพื้นที่ 3 (นครราชสีมา)",
-        "ศูนย์ปฏิบัติการคดีพิเศษเขตพื้นที่ 4 (ขอนแก่น)",
-        "ศูนย์ปฏิบัติการคดีพิเศษเขตพื้นที่ 5 (เชียงใหม่)",
-        "ศูนย์ปฏิบัติการคดีพิเศษเขตพื้นที่ 6 (พิษณุโลก)",
-        "ศูนย์ปฏิบัติการคดีพิเศษเขตพื้นที่ 7 (ราชบุรี)",
-        "ศูนย์ปฏิบัติการคดีพิเศษเขตพื้นที่ 8 (สุราษฎร์ธานี)",
-        "ศูนย์ปฏิบัติการคดีพิเศษเขตพื้นที่ 9 (สงขลา)",
-        "ศูนย์ปฏิบัติการคดีพิเศษเขตพื้นที่ 10 (ชายแดนภาคใต้)"
-      ];
-
-      function safeAlert(title, text, icon) {
-          if (typeof Swal !== 'undefined') {
-              Swal.fire(title, text, icon);
-          } else {
-              alert(`${title}\n${text}`);
-          }
-      }
-
-      document.addEventListener('DOMContentLoaded', function() {
-        fetchData();
-        dataModal = new bootstrap.Modal(document.getElementById('dataModal'));
-        populateDeptDropdown();
-        
-        const pInput = document.getElementById('phone');
-        if(pInput){
-            pInput.addEventListener('input', function (e) {
-                let x = e.target.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,4})/);
-                e.target.value = !x[2] ? x[1] : x[1] + '-' + x[2] + (x[3] ? '-' + x[3] : '');
-            });
-        }
-      });
-
-      function populateDeptDropdown() {
-        const select = document.getElementById('dept');
-        select.innerHTML = '<option value="" selected disabled>-- เลือกสังกัด --</option>';
-        deptOptions.forEach(opt => {
-          const option = document.createElement('option');
-          option.value = opt; option.text = opt;
-          select.appendChild(option);
-        });
-      }
-
-      function fetchData() {
-        document.getElementById('loader').style.display = 'block';
-        document.getElementById('contentArea').innerHTML = '';
-        document.getElementById('noResults').style.display = 'none';
-        
-        google.script.run
-          .withSuccessHandler(function(jsonString) {
-             document.getElementById('loader').style.display = 'none';
-             try {
-                const data = JSON.parse(jsonString);
-                if (!data || data.length === 0) {
-                   document.getElementById('noResults').style.display = 'block';
-                   safeAlert('แจ้งเตือน', 'ไม่พบข้อมูลใน Sheet (กรุณาตรวจสอบชื่อ Sheet "Data")', 'warning');
-                } else {
-                   allData = data;
-                   renderData(data);
-                   checkBirthdayToday(data);
-                }
-             } catch (e) {
-                safeAlert('Error', 'เกิดข้อผิดพลาดในการแปลงข้อมูล: ' + e.message, 'error');
-             }
-          })
-          .withFailureHandler(function(err){
-             document.getElementById('loader').style.display = 'none';
-             safeAlert('Error', 'ไม่สามารถเชื่อมต่อ Server ได้: ' + err.message, 'error');
-          })
-          .getData();
-      }
-
-      function renderData(data) {
-        const container = document.getElementById('contentArea');
-        container.innerHTML = '';
-        
-        if (data.length === 0) {
-          document.getElementById('noResults').style.display = 'block'; return;
-        } else {
-          document.getElementById('noResults').style.display = 'none';
-        }
-
-        const groups = {};
-        data.forEach(row => {
-          let dept = row[4] ? row[4].toString().trim() : 'ไม่ระบุสังกัด';
-          if(dept === "") dept = 'ไม่ระบุสังกัด';
-          if(!groups[dept]) groups[dept] = [];
-          groups[dept].push(row);
-        });
-
-        const sortedDepts = Object.keys(groups).sort((a,b) => a.localeCompare(b, 'th'));
-        let html = '';
-
-        sortedDepts.forEach(dept => {
-          const members = groups[dept];
-          members.sort((a,b) => (a[1]||"").localeCompare((b[1]||""), 'th'));
-
-          html += `<div class="dept-header"><span class="dept-title">${dept}</span><span class="dept-badge">${members.length}</span></div><div class="row g-3 mb-4">`;
-
-          members.forEach(row => {
-            // ดึงข้อมูลตาม Index
-            const id = row[0];
-            const name = row[1];
-            const nickname = row[2];
-            const position = row[3];
-            const phone = row[5];
-            const line = row[6];
-            const email = row[7];
-            const birthdate = row[8];
-            const committeeRole = row[9]; // คอลัมน์ J = Index 9
-
-            const displayNick = nickname ? `<span class="member-nick">(${nickname})</span>` : '';
-            
-            // --- 1. สร้าง Badge คณะกรรมการ ---
-            let committeeBadge = '';
-            if (committeeRole && committeeRole.toString().trim() !== '') {
-                // เพิ่ม margin-bottom เพื่อเว้นระยะห่างจากวันเกิดเล็กน้อย
-                committeeBadge = `
-                  <div style="margin-top: 2px; margin-bottom: 6px;">
-                    <span class="badge bg-success rounded-pill" style="font-weight:500; font-size: 0.8rem;">
-                      <i class="fas fa-star me-1 text-warning"></i>${committeeRole}
-                    </span>
-                  </div>`;
-            }
-
-            // --- 2. จัดการวันเกิด ---
-            let bdDisplay = '';
-            let day, month, year;
-            
-            if (birthdate) {
-                let str = birthdate.toString().trim();
-                if (str.includes('/')) {
-                    const parts = str.split('/');
-                    if (parts.length === 3) {
-                        day = parseInt(parts[0]);
-                        month = parseInt(parts[1]);
-                        year = parseInt(parts[2]);
-                    }
-                } else if (str.includes('-')) {
-                    const parts = str.split('-');
-                    if (parts.length === 3) {
-                        year = parseInt(parts[0]);
-                        month = parseInt(parts[1]);
-                        day = parseInt(parts[2]);
-                    }
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Sarabun', 'sans-serif'] },
+                    colors: { brand: { 50: '#f0f9ff', 500: '#0ea5e9', 600: '#0284c7', 900: '#0c4a6e' } }
                 }
             }
+        };
+    </script>
+    <style>
+        body { font-family: 'Sarabun', sans-serif; background-color: #f1f5f9; transition: font-size 0.3s ease; }
+        .hide { display: none !important; }
+        .glass-card { background: rgba(255, 255, 255, 1); box-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.05); }
+        .loader { border: 4px solid #f3f3f3; border-top: 4px solid #0ea5e9; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        .blur-result { filter: blur(8px); pointer-events: none; user-select: none; }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col items-center">
 
-            if (day && month && year) {
-                const monthsTh = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
-                const yearTh = year < 2400 ? year + 543 : year;
-                bdDisplay = `<div class="bd-badge">🎂 ${day} ${monthsTh[month-1] || '-'} ${yearTh}</div>`;
-            } else if (birthdate) {
-                bdDisplay = `<div class="bd-badge">${birthdate}</div>`;
-            }
+    <div id="loadingOverlay" class="fixed inset-0 bg-slate-900/60 z-[100] flex items-center justify-center hide backdrop-blur-sm">
+        <div class="bg-white p-8 rounded-[2rem] flex flex-col items-center shadow-2xl max-w-[90%] text-center">
+            <div class="loader mb-6"></div>
+            <p id="loadingText" class="font-bold text-xl text-slate-800">กำลังโหลดข้อมูล</p>
+        </div>
+    </div>
 
-            // --- 3. ปุ่มติดต่อ ---
-            let btns = '';
-            const cleanPhone = phone ? phone.toString().replace(/\D/g, '') : '';
-            if(cleanPhone.length > 8) btns += `<a href="tel:${cleanPhone}" target="_top" class="btn-icon btn-phone"><i class="fas fa-phone"></i></a>`;
-            if(line) btns += `<a href="https://line.me/ti/p/~${line}" target="_blank" class="btn-icon btn-line"><i class="fab fa-line"></i></a>`;
-            if(email) btns += `<a href="mailto:${email}" class="btn-icon btn-email"><i class="fas fa-envelope"></i></a>`;
-
-            // --- 4. ประกอบร่าง (ย้ายตำแหน่ง Badge) ---
-            html += `
-              <div class="col-12 col-md-6 col-lg-4">
-                <div class="member-card">
-                  <div class="edit-icon" onclick="openModal('${id}')"><i class="fas fa-pen"></i></div>
-                  <div>
-                    <div class="member-name">${name} ${displayNick}</div>
-                    <div class="member-pos">${position || '-'}</div>
-                    ${committeeBadge} ${bdDisplay}
-                  </div>
-                  <div class="card-footer-custom">${btns || '<small class="text-muted small">ไม่มีข้อมูลติดต่อ</small>'}</div>
+    <!-- Container หลักจะปรับขนาดอัตโนมัติตามโหมด -->
+    <main id="mainContainer" class="w-full max-w-lg flex-1 flex flex-col relative bg-white min-h-screen shadow-2xl overflow-hidden transition-all duration-300">
+        
+        <header id="appHeader" class="bg-gradient-to-br from-brand-600 to-brand-500 text-white p-5 rounded-b-3xl shadow-md hide z-10 relative">
+            <div class="flex justify-between items-start">
+                <div class="flex flex-col">
+                    <div class="flex items-center gap-2 mb-0.5">
+                        <span class="text-2xl drop-shadow-md">🏆</span>
+                        <h1 class="text-lg font-black leading-tight tracking-tight uppercase">DSI Class Awards</h1>
+                    </div>
+                    <div class="pl-8">
+                        <h2 class="text-sm font-bold text-amber-200 tracking-wide">The Best of พสพ.13</h2>
+                        <p class="text-[10px] text-white/90 opacity-100 leading-tight mt-0.5 font-medium italic">โหวตเพื่อนคนโปรดประจำรุ่น พสพ.13</p>
+                    </div>
                 </div>
-              </div>`;
-          });
-          html += `</div>`;
-        });
-        container.innerHTML = html;
-      }
-
-      function checkBirthdayToday(data) {
-          const today = new Date();
-          const currentDay = today.getDate();
-          const currentMonth = today.getMonth() + 1;
-          let birthdayList = [];
-
-          data.forEach(row => {
-              if (row[8]) {
-                  let d, m;
-                  let str = row[8].toString().trim();
-                  
-                  // พยายามแกะวันเดือนเกิด
-                  if (str.includes('/')) {
-                      const parts = str.split('/');
-                      d = parseInt(parts[0]);
-                      m = parseInt(parts[1]);
-                  } else if (str.includes('-')) {
-                      const parts = str.split('-');
-                      d = parseInt(parts[2]);
-                      m = parseInt(parts[1]);
-                  }
-
-                  if (d === currentDay && m === currentMonth) {
-                      birthdayList.push(`${row[1]} (${row[2] || '-'})`);
-                  }
-              }
-          });
-
-          if (birthdayList.length > 0) {
-              let htmlList = `<ul class="text-start mt-2">` + birthdayList.map(n => `<li>${n}</li>`).join('') + `</ul>`;
-              safeAlert('🎂 Happy Birthday!', `สุขสันต์วันเกิด<br>${htmlList}`, 'info');
-          }
-      }
-
-      function filterData() {
-        const input = document.getElementById('searchInput').value.toLowerCase();
-        const filtered = allData.filter(row => {
-            const txt = ((row[1]||"")+(row[2]||"")+(row[3]||"")+(row[4]||"")+(row[5]||"")).toLowerCase();
-            return txt.includes(input);
-        });
-        renderData(filtered);
-      }
-
-      function openModal(id = null) {
-        // 1. ล้างค่าในฟอร์มให้สะอาดก่อน
-        document.getElementById('memberForm').reset();
-        
-        if(id) {
-          // --- กรณีแก้ไขข้อมูล (Edit Mode) ---
-          document.getElementById('modalTitle').innerText = 'แก้ไขข้อมูล';
-          document.getElementById('recId').value = id;
-
-          // ค้นหาข้อมูลสมาชิก
-          const item = allData.find(r => r[0] == id);
-          if(item) {
-            document.getElementById('name').value = item[1];
-            document.getElementById('nickname').value = item[2];
-            document.getElementById('position').value = item[3];
-            document.getElementById('dept').value = item[4]; 
-            document.getElementById('phone').value = item[5] ? item[5].toString().replace(/'/g,'') : '';
-            document.getElementById('lineId').value = item[6];
-            document.getElementById('email').value = item[7];
+                <div class="text-right flex items-center gap-2">
+                    <!-- ปุ่มปรับขนาดอักษร -->
+                    <button onclick="toggleFontSize()" class="bg-white/20 hover:bg-white/30 rounded-full px-2 py-1.5 flex flex-col items-center justify-center text-[10px] font-bold text-white transition-all border border-white/30 shadow-sm mr-1 w-12 active:scale-95">
+                        <i class="ph-bold ph-text-aa text-sm mb-0.5"></i>
+                        <span id="headerToggleText" class="leading-none">ตัวใหญ่</span>
+                    </button>
+                    
+                    <img id="headerUserImg" referrerpolicy="no-referrer" class="w-10 h-10 rounded-full border-2 border-white object-cover shadow-sm bg-brand-500">
+                    <div class="text-left hidden sm:block">
+                        <p class="text-[11px] font-bold" id="headerUserName"></p>
+                        <button onclick="logout()" class="text-[10px] text-white/80 hover:text-white underline uppercase font-bold tracking-widest mt-0.5">Logout</button>
+                    </div>
+                </div>
+            </div>
             
-            // ============================================================
-            // ส่วนที่แก้ไข: จัดการเรื่องวันที่ผิดเพี้ยน/สลับเดือน
-            // ============================================================
-            if(item[8]) {
-                let str = item[8].toString().trim();
-                let yyyy, mm, dd;
+            <div class="flex bg-brand-900/20 rounded-xl p-1 mt-5 border border-white/10">
+                <button onclick="switchTab('vote')" id="tabVote" class="flex-1 py-2 text-sm font-bold rounded-lg bg-white text-brand-600 shadow-sm transition-all duration-300">โหวตเพื่อน</button>
+                <button onclick="switchTab('leaderboard')" id="tabLeaderboard" class="flex-1 py-2 text-sm font-bold rounded-lg text-white hover:bg-white/10 transition-all duration-300">ผลคะแนน (Top 3)</button>
+            </div>
+        </header>
 
-                // กรณีที่ 1: ข้อมูลมาเป็นข้อความที่มีเครื่องหมาย / (เช่น 5/4/1980)
-                // ระบบจะบังคับให้ตัวแรกเป็น "วัน" ตัวที่สองเป็น "เดือน" เสมอ (แก้ปัญหาสลับเดือน)
-                if (str.includes('/')) {
-                    const parts = str.split('/');
-                    if (parts.length === 3) {
-                        dd = parts[0].padStart(2, '0'); // เลขตัวหน้า คือ วันที่
-                        mm = parts[1].padStart(2, '0'); // เลขตัวกลาง คือ เดือน
-                        yyyy = parts[2];               // เลขตัวหลัง คือ ปี
-                    }
-                } 
-                // กรณีที่ 2: ข้อมูลมาเป็นขีด - หรือรูปแบบมาตรฐานอื่น (Date Object/ISO)
-                // (เช่น 2026-12-24T17:00... หรือ 1980-04-05)
-                else {
-                    let d = new Date(str);
-                    if (!isNaN(d.getTime())) {
-                        yyyy = d.getFullYear();
-                        mm = (d.getMonth() + 1).toString().padStart(2, '0'); // เดือนต้อง +1 เสมอใน JS
-                        dd = d.getDate().toString().padStart(2, '0');
-                    }
-                }
+        <section id="loginView" class="flex-1 flex flex-col items-center justify-center p-6 bg-slate-50 relative">
+            <!-- ปุ่มปรับขนาดอักษร หน้า Login -->
+            <div class="absolute top-4 right-4 z-20">
+                <button onclick="toggleFontSize()" class="bg-white/90 backdrop-blur border border-slate-200 shadow-sm rounded-full px-3 py-1.5 flex items-center gap-1.5 text-xs font-bold text-slate-600 hover:bg-slate-100 active:scale-95 transition-all">
+                    <i class="ph-bold ph-text-aa text-base text-brand-500"></i>
+                    <span id="loginToggleText">ตัวใหญ่</span>
+                </button>
+            </div>
 
-                // นำค่าที่แกะได้ มาใส่ในช่อง Input (ต้องเรียงเป็น ปี-เดือน-วัน)
-                if (yyyy && mm && dd) {
-                    document.getElementById('birthdate').value = `${yyyy}-${mm}-${dd}`;
+            <div class="w-full max-w-sm mt-4">
+                <div class="bg-amber-100/80 border border-amber-200 p-3 rounded-2xl mb-6 text-center shadow-sm">
+                    <p class="text-xs text-amber-900 font-bold">
+                        <i class="ph-bold ph-arrow-up text-lg text-brand-600"></i> ปิด <b>" (X) "</b> แถบสีฟ้าด้านบนสุดก่อนเริ่มใช้งาน <i class="ph-bold ph-arrow-up text-lg text-brand-600"></i>
+                    </p>
+                </div>
+
+                <div class="text-center mb-8">
+                    <div class="w-20 h-20 bg-brand-100 text-brand-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-inner border-2 border-white">
+                        <i class="ph-fill ph-trophy text-4xl"></i>
+                    </div>
+                    <h2 class="text-2xl font-black text-slate-800 tracking-tight uppercase">พสพ.13 รุ่นนี้มีของ Awards</h2>
+                    <p class="text-slate-500 text-sm font-bold mt-1">เข้าสู่ระบบเพื่อเริ่มโหวต</p>
+                </div>
+                
+                <div class="bg-white p-6 rounded-[2rem] shadow-lg border border-slate-100">
+                    <div class="mb-5">
+                        <label class="block text-sm font-bold text-slate-700 mb-2 ml-1">เลือกชื่อของท่าน</label>
+                        <select id="loginId" class="w-full border border-slate-300 rounded-xl px-4 py-3 bg-slate-50 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition-all font-medium text-sm">
+                            <option value="">-- กรุณาเลือกชื่อ --</option>
+                        </select>
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-sm font-bold text-slate-700 mb-2 ml-1">รหัสผ่าน (PIN)</label>
+                        <div class="bg-blue-50 p-3 rounded-xl border border-blue-100 mb-3">
+                            <p class="text-xs text-blue-900 font-medium leading-relaxed">
+                                <b><i class="ph-fill ph-info"></i> ครั้งแรก:</b> ตั้งรหัสผ่านอะไรก็ได้ (4 หลักขึ้นไป)<br>
+                                <span class="text-red-500">*รหัสนี้จะใช้เข้าดูผลคะแนนในครั้งถัดไป</span>
+                            </p>
+                        </div>
+                        <input type="password" id="loginPin" placeholder="รหัสผ่านเดิม หรือ ตั้งใหม่" class="w-full border border-slate-300 rounded-xl px-4 py-3 bg-slate-50 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition-all font-medium text-sm">
+                    </div>
+                    <button onclick="handleLogin()" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-3.5 rounded-xl transition-all shadow-md active:scale-95 flex justify-center items-center gap-2 text-base">
+                        เข้าสู่ระบบ <i class="ph-bold ph-sign-in"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section id="dashboardView" class="flex-1 overflow-y-auto p-4 pb-28 hide bg-slate-50">
+            <div id="categoriesContainer" class="space-y-4"></div>
+            <div class="fixed bottom-0 left-0 right-0 w-full max-w-inherit mx-auto p-4 bg-white/95 backdrop-blur-md border-t border-slate-100 shadow-[0_-5px_15px_rgba(0,0,0,0.05)] z-10 transition-all duration-300" id="submitBtnContainer">
+                <button onclick="confirmSubmit()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-4 rounded-xl shadow-lg transition-all active:scale-95 flex justify-center items-center gap-2 text-lg">
+                    <i class="ph-bold ph-paper-plane-tilt"></i> ส่งผลโหวตทั้งหมด
+                </button>
+            </div>
+        </section>
+
+        <section id="leaderboardView" class="flex-1 overflow-y-auto p-4 hide bg-slate-50 pb-16">
+            <div class="flex justify-between items-center mb-5 px-1">
+                <h2 class="text-lg font-black text-slate-800">สรุปคะแนนเรียงตามอันดับ</h2>
+                <button onclick="loadLeaderboard()" class="bg-brand-500 text-white hover:bg-brand-600 active:scale-95 px-3 py-2 rounded-xl text-sm font-bold flex items-center gap-1.5 transition-all shadow-md">
+                    <i class="ph-bold ph-arrows-clockwise"></i> รีเฟรช
+                </button>
+            </div>
+            
+            <!-- อัปเดตส่วนประกาศผลคะแนน เพิ่มอารมณ์ขันและนับถอยหลัง -->
+            <div id="revealAnnouncement" class="hide mb-6 bg-gradient-to-br from-amber-500 to-orange-600 p-5 rounded-[2rem] text-white shadow-xl border-4 border-white/30 flex flex-col gap-4">
+                <div class="flex items-center gap-4">
+                    <div class="bg-white/20 p-3 w-14 h-14 flex items-center justify-center rounded-full text-3xl animate-bounce shadow-inner border border-white/30">🫣</div>
+                    <div class="flex-1">
+                        <h4 class="font-black text-lg mb-0.5 drop-shadow-md">อุ๊ย! คะแนนถูกซ่อนไว้ก่อนนะจ๊ะ 🤫</h4>
+                        <p class="text-[13px] font-bold opacity-90 leading-tight">ใครจะได้มง? รอลุ้นพร้อมกันวันที่<br><span class="text-amber-100 uppercase tracking-wide">7 พ.ค. 2569 เวลา 20.00 น.</span></p>
+                    </div>
+                </div>
+                
+                <!-- ส่วนนับถอยหลัง (Countdown) -->
+                <div class="bg-black/15 rounded-[1.5rem] p-3 text-center border border-white/20 backdrop-blur-sm shadow-inner">
+                    <p class="text-[10px] uppercase tracking-widest font-bold mb-2 opacity-80">จะเปิดเผยผลโหวตในอีก</p>
+                    <div class="flex justify-center gap-2 text-2xl font-black tabular-nums tracking-tighter">
+                        <div class="flex flex-col bg-white/20 rounded-xl min-w-[55px] py-1 shadow-sm"><span id="cdDays">00</span><span class="text-[9px] font-medium uppercase tracking-normal opacity-90">วัน</span></div><span class="mt-1 opacity-50">:</span>
+                        <div class="flex flex-col bg-white/20 rounded-xl min-w-[55px] py-1 shadow-sm"><span id="cdHours">00</span><span class="text-[9px] font-medium uppercase tracking-normal opacity-90">ชม.</span></div><span class="mt-1 opacity-50">:</span>
+                        <div class="flex flex-col bg-white/20 rounded-xl min-w-[55px] py-1 shadow-sm"><span id="cdMins">00</span><span class="text-[9px] font-medium uppercase tracking-normal opacity-90">นาที</span></div><span class="mt-1 opacity-50">:</span>
+                        <div class="flex flex-col bg-white/20 rounded-xl min-w-[55px] py-1 shadow-sm text-amber-200"><span id="cdSecs">00</span><span class="text-[9px] font-medium uppercase tracking-normal text-white opacity-90">วินาที</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="leaderboardContainer" class="space-y-5"></div>
+        </section>
+
+    </main>
+
+    <div id="studentModal" class="fixed inset-0 z-50 hide">
+        <div class="absolute inset-0 bg-slate-900/70 backdrop-blur-sm transition-opacity" onclick="closeModal()"></div>
+        <!-- ปรับคอนเทนเนอร์ Modal ให้เชื่อมโยงกับ max-w หลัก -->
+        <div class="absolute bottom-0 left-0 right-0 w-full max-w-inherit mx-auto bg-white h-[100dvh] flex flex-col shadow-2xl transform transition-all duration-300 translate-y-full" id="modalContent">
+            
+            <div class="sticky top-0 z-10 bg-white shadow-sm">
+                <div class="px-4 pb-3 pt-10 sm:pt-6 border-b border-slate-100 flex justify-between items-start bg-brand-50/50">
+                    <div class="pr-3">
+                        <h3 class="font-black text-lg text-slate-800">ระบุชื่อเพื่อนที่ต้องการเลือก</h3>
+                        <p class="text-sm text-brand-600 font-bold mt-1 bg-brand-100 inline-block px-2 py-0.5 rounded" id="modalCatName"></p>
+                        <p class="text-xs text-slate-600 mt-1 leading-relaxed font-medium italic" id="modalCatDesc"></p>
+                    </div>
+                    <button onclick="closeModal()" class="w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-full bg-slate-200 text-slate-600 hover:bg-slate-300 mt-1 transition-all">
+                        <i class="ph-bold ph-x text-lg"></i>
+                    </button>
+                </div>
+                
+                <div class="p-3 bg-white border-b border-slate-100">
+                    <div class="relative">
+                        <i class="ph ph-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 text-lg"></i>
+                        <input type="text" id="searchInput" onkeyup="filterUsers()" placeholder="พิมพ์ชื่อเล่นเพื่อค้นหา..." class="w-full pl-10 pr-4 py-2.5 bg-slate-100 border-none rounded-xl focus:ring-2 focus:ring-brand-500/20 outline-none text-sm font-medium">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex-1 overflow-y-auto p-3 pb-24">
+                <div class="grid grid-cols-4 sm:grid-cols-5 gap-2" id="modalUsersGrid"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ระบบจัดการขนาดตัวอักษร
+        let isLargeFont = localStorage.getItem('largeFontMode') === 'true';
+
+        function applyFontMode() {
+            const htmlEl = document.documentElement;
+            const mainContainer = document.getElementById('mainContainer');
+            const submitBtnContainer = document.getElementById('submitBtnContainer');
+            const modalContent = document.getElementById('modalContent');
+            const loginToggle = document.getElementById('loginToggleText');
+            const headerToggle = document.getElementById('headerToggleText');
+            
+            if (isLargeFont) {
+                // ขยายทุกอย่าง 25% แบบสมดุล
+                htmlEl.style.fontSize = '125%'; 
+                if(mainContainer) {
+                    mainContainer.classList.remove('max-w-lg');
+                    mainContainer.classList.add('max-w-2xl');
                 }
+                if(submitBtnContainer) {
+                    submitBtnContainer.style.maxWidth = '42rem'; // max-w-2xl
+                }
+                if(modalContent) {
+                    modalContent.style.maxWidth = '42rem';
+                }
+                if(loginToggle) loginToggle.innerText = 'ขนาดปกติ';
+                if(headerToggle) headerToggle.innerText = 'ขนาดปกติ';
+            } else {
+                // ขนาดปกติ
+                htmlEl.style.fontSize = '100%'; 
+                if(mainContainer) {
+                    mainContainer.classList.remove('max-w-2xl');
+                    mainContainer.classList.add('max-w-lg');
+                }
+                if(submitBtnContainer) {
+                    submitBtnContainer.style.maxWidth = '32rem'; // max-w-lg
+                }
+                if(modalContent) {
+                    modalContent.style.maxWidth = '32rem';
+                }
+                if(loginToggle) loginToggle.innerText = 'ตัวใหญ่';
+                if(headerToggle) headerToggle.innerText = 'ตัวใหญ่';
             }
-            // ============================================================
-          }
-        } else {
-          // --- กรณีเพิ่มข้อมูลใหม่ (Add Mode) ---
-          document.getElementById('modalTitle').innerText = 'เพิ่มสมาชิกใหม่';
-          document.getElementById('recId').value = "";
-          
-          // ค่า Default
-          document.getElementById('position').value = "พนักงานสอบสวนคดีพิเศษชำนาญการ";
-          document.getElementById('dept').value = "";
+        }
+
+        function toggleFontSize() {
+            isLargeFont = !isLargeFont;
+            localStorage.setItem('largeFontMode', isLargeFont);
+            applyFontMode();
         }
         
-        dataModal.show();
-      }
+        // รันฟังก์ชันตั้งแต่โหลดเว็บเพื่อเซ็ตขนาดที่จำไว้
+        applyFontMode();
 
-      function handleFormSubmit(e) {
-        e.preventDefault();
-        const btn = document.getElementById('btnSave');
-        const orgText = btn.innerHTML;
-        btn.disabled = true; btn.innerHTML = 'กำลังบันทึก...';
+        // ตัวแปรเก็บตัวจับเวลานับถอยหลัง
+        let countdownInterval;
 
-        const form = document.getElementById('memberForm');
-        const formData = {
-          recId: form.recId.value,
-          name: form.name.value,
-          nickname: form.nickname.value,
-          position: form.position.value,
-          dept: form.dept.value,
-          phone: form.phone.value,
-          lineId: form.lineId.value,
-          email: form.email.value,
-          birthdate: form.birthdate.value
+        // ฟังก์ชันเริ่มนับถอยหลัง
+        function startCountdown() {
+            const revealDate = new Date('2026-05-07T20:00:00').getTime();
+            
+            if (countdownInterval) clearInterval(countdownInterval);
+
+            countdownInterval = setInterval(function() {
+                const now = new Date().getTime();
+                const distance = revealDate - now;
+
+                if (distance < 0) {
+                    clearInterval(countdownInterval);
+                    // เมื่อเวลานับถอยหลังถึง 0 ให้ดึงข้อมูลมาแสดงใหม่โดยอัตโนมัติ (จะคลายเบลอเอง)
+                    if(!document.getElementById("leaderboardView").classList.contains("hide")) {
+                        loadLeaderboard();
+                    }
+                    return;
+                }
+
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                const elDays = document.getElementById("cdDays");
+                if (elDays) {
+                    elDays.innerText = days.toString().padStart(2, '0');
+                    document.getElementById("cdHours").innerText = hours.toString().padStart(2, '0');
+                    document.getElementById("cdMins").innerText = minutes.toString().padStart(2, '0');
+                    document.getElementById("cdSecs").innerText = seconds.toString().padStart(2, '0');
+                } else {
+                    clearInterval(countdownInterval);
+                }
+            }, 1000);
+        }
+
+        window.getAvatarUrl = function(name) {
+            return "https://ui-avatars.com/api/?name=" + encodeURIComponent(name) + "&background=0ea5e9&color=fff&size=200&font-size=0.35&bold=true";
+        };
+        
+        window.handleImageError = function(img) {
+            img.onerror = null; 
+            var name = img.getAttribute("data-name") || "User";
+            img.src = window.getAvatarUrl(name);
         };
 
-        google.script.run.withSuccessHandler(res => {
-          dataModal.hide();
-          btn.disabled = false; btn.innerHTML = orgText;
-          safeAlert('เรียบร้อย', res, 'success');
-          fetchData();
-        }).saveData(formData);
-      }
+        window.cleanImageUrl = function(imgStr) {
+            if (!imgStr) return "";
+            var rawUrl = String(imgStr).trim();
+            var match = rawUrl.match(/\[img\](.*?)\[\/img\]/i);
+            if (match && match[1]) rawUrl = match[1].trim();
+            if (rawUrl.indexOf("cloudinary.com") !== -1) {
+                rawUrl = rawUrl.replace(/e_improve/g, "e_brightness:15,e_saturation:-15,q_auto,f_auto");
+            }
+            return rawUrl;
+        };
+
+        const CATEGORIES = [
+            { id: 1, title: "นักเรียนดีเด่น 💯", desc: "ไม่เคยลา ไม่เคยขาด ไม่เคยมาสาย", type: "static", note: "ประเมินจากระบบสถิติสถาบันฯ" },
+            { id: 2, title: "ขวัญใจสถาบัน 👑", desc: "มนุษย์สัมพันธ์ดี ให้ความร่วมมือยอดเยี่ยม", type: "static", note: "ประเมินโดยเจ้าหน้าที่สถาบันฯ" },
+            { id: 3, title: "พี่จะสอบจอหงวน 📜", desc: "ตอบได้ทุกคำถาม คลังข้อมูลแน่นปึก", type: "vote" },
+            { id: 4, title: "คำถามทองคำ 🙋‍♂️", desc: "พร้อมยกมือถามวิทยากรทันทีที่เปิดโอกาส", type: "vote" },
+            { id: 5, title: "ลิ้นจระเข้ 👅", desc: "กินได้ทุกอย่าง เติมได้ทุกมื้อ ไม่มีบ่น", type: "vote" },
+            { id: 6, title: "พลังบวก 🌻", desc: "ร่าเริง แจ่มใส มาสคอตประจำรุ่น", type: "vote" },
+            { id: 7, title: "กระเป๋าโดราเอมอน 🎒", desc: "อุปกรณ์พร้อมสำหรับทุกสถานการณ์", type: "vote" },
+            { id: 8, title: "งามอย่างไทย 🙏", desc: "กิริยาดี ไหว้สวย พูดจาน่าฟัง", type: "vote" },
+            { id: 9, title: "ทัพหน้าลุยไม่ถอย ⚔️", desc: "อาสาสมัครตัวแทนรุ่นทุกอีเวนท์", type: "vote" },
+            { id: 10, title: "The Voice DSI 🎤", desc: "ร้องเพลงได้ทุกสไตล์ พร้อมจับไมค์เสมอ", type: "vote" },
+            { id: 11, title: "ปาร์ตี้อย่าลืมพี่ 🥳", desc: "ร่วมทุกงาน มันส์ยันเลิก แบตไม่เคยหมด", type: "vote" },
+            { id: 12, title: "สายแบกไม่สนชีวิต 🐫", desc: "รับงานกลุ่ม ทำงานหนักเพื่อส่วนรวม", type: "vote" },
+            { id: 13, title: "วัยรุ่นเน้นสุขภาพ 🏃‍♂️", desc: "เน้นกีฬา ดูแลสุขภาพร่างกายดีเด่น", type: "vote" },
+            { id: 14, title: "Cyber Nerd 🤖", desc: "คุยกับ AI และเทคโนโลยีรู้เรื่องที่สุด", type: "vote" },
+            { id: 15, title: "Yellow Pages 📞", desc: "กว้างขวาง รู้จักทุกวงการ รับจบทุกดีล", type: "vote" }
+        ];
+
+        var state = {
+            currentUser: null,
+            allUsers: [],
+            myVotes: {}, 
+            currentSelectingCat: null
+        };
+
+        function runGas(funcName, arg1, arg2) {
+            return new Promise(function(resolve, reject) {
+                if (typeof google !== "undefined" && google.script && google.script.run) {
+                    var runner = google.script.run.withSuccessHandler(resolve).withFailureHandler(reject);
+                    if (arg2 !== undefined) runner[funcName](arg1, arg2);
+                    else if (arg1 !== undefined) runner[funcName](arg1);
+                    else runner[funcName]();
+                } else {
+                    setTimeout(function() {
+                        if (funcName === "getInitialData") resolve([{id: "1", name: "นายทดสอบ", nickname: "ทดสอบ", image: ""}]);
+                        else if (funcName === "login") resolve({ success: true, user: { id: arg1, name: "นายทดสอบ", nickname: "ทดสอบ", image: "" }, isFirstTime: true });
+                        else resolve({});
+                    }, 800);
+                }
+            });
+        }
+
+        function showLoader(text) {
+            document.getElementById("loadingText").innerText = text || "กำลังโหลดข้อมูล";
+            document.getElementById("loadingOverlay").classList.remove("hide");
+        }
+        function hideLoader() { document.getElementById("loadingOverlay").classList.add("hide"); }
+
+        window.onload = async function() {
+            showLoader("กำลังเชื่อมต่อฐานข้อมูล");
+            try {
+                var rawUsers = await runGas("getInitialData");
+                state.allUsers = rawUsers.map(function(u) { u.image = window.cleanImageUrl(u.image); return u; });
+                populateLoginDropdown();
+                var sessionStr = localStorage.getItem("voteAppUser");
+                if (sessionStr) {
+                    state.currentUser = JSON.parse(sessionStr);
+                    state.currentUser.image = window.cleanImageUrl(state.currentUser.image);
+                    await loadUserDashboard();
+                } else {
+                    hideLoader();
+                    document.getElementById("loginView").classList.remove("hide");
+                }
+            } catch (error) {
+                hideLoader();
+                Swal.fire({ title: "ข้อผิดพลาด", text: "ไม่สามารถเชื่อมต่อได้ กรุณาลองใหม่", icon: "error" });
+            }
+        };
+
+        function populateLoginDropdown() {
+            var select = document.getElementById("loginId");
+            state.allUsers.forEach(function(user) {
+                var opt = document.createElement("option");
+                opt.value = user.id;
+                opt.text = user.id + " - " + user.name + " (" + user.nickname + ")";
+                select.appendChild(opt);
+            });
+        }
+
+        async function handleLogin() {
+            var id = document.getElementById("loginId").value;
+            var pin = document.getElementById("loginPin").value;
+            if (!id || !pin || pin.trim().length < 4) {
+                Swal.fire("แจ้งเตือน", "กรุณาเลือกชื่อและระบุรหัส 4 หลักขึ้นไป", "warning");
+                return;
+            }
+            showLoader("กำลังตรวจสอบสิทธิ์");
+            try {
+                var res = await runGas("login", id, pin.trim());
+                if (res.success) {
+                    res.user.image = window.cleanImageUrl(res.user.image); 
+                    state.currentUser = res.user;
+                    localStorage.setItem("voteAppUser", JSON.stringify(res.user));
+                    if (res.isFirstTime) {
+                        await Swal.fire({ title: "บันทึกรหัสสำเร็จ!", text: "กรุณาจำรหัส " + pin + " ไว้สำหรับครั้งหน้า", icon: "success" });
+                    }
+                    await loadUserDashboard();
+                } else {
+                    hideLoader();
+                    Swal.fire("ผิดพลาด", res.message, "error");
+                }
+            } catch (error) { hideLoader(); Swal.fire("ขออภัย", "เกิดข้อผิดพลาดในการตรวจสอบ", "error"); }
+        }
+
+        function logout() {
+            localStorage.removeItem("voteAppUser");
+            location.reload();
+        }
+
+        async function loadUserDashboard() {
+            showLoader("กำลังดึงรายการโหวต");
+            document.getElementById("headerUserName").innerText = state.currentUser.nickname;
+            var headerImg = document.getElementById("headerUserImg");
+            headerImg.setAttribute("data-name", state.currentUser.nickname);
+            headerImg.onerror = function() { window.handleImageError(this); };
+            headerImg.src = state.currentUser.image || window.getAvatarUrl(state.currentUser.nickname);
+            document.getElementById("loginView").classList.add("hide");
+            document.getElementById("appHeader").classList.remove("hide");
+            document.getElementById("dashboardView").classList.remove("hide");
+            try {
+                state.myVotes = await runGas("getUserVotes", state.currentUser.id);
+                renderCategories();
+            } catch (error) { Swal.fire("คำเตือน", "ดึงข้อมูลเดิมไม่ได้ แต่ท่านสามารถเริ่มโหวตใหม่ได้", "warning"); renderCategories(); }
+            hideLoader();
+        }
+
+        function renderCategories() {
+            var container = document.getElementById("categoriesContainer");
+            container.innerHTML = "";
+            CATEGORIES.forEach(function(cat) {
+                var card = document.createElement("div");
+                card.className = "glass-card rounded-2xl p-4 border border-slate-100 flex flex-col gap-3 relative overflow-hidden";
+                var colorBar = document.createElement("div");
+                colorBar.className = "absolute left-0 top-0 bottom-0 w-1.5 " + (cat.type === "static" ? "bg-slate-300" : "bg-brand-500");
+                card.appendChild(colorBar);
+                var contentHTML = "<div class=\"pl-2\">" +
+                    "<h3 class=\"font-bold text-slate-800 text-lg leading-tight\">" + cat.id + ". " + cat.title + "</h3>" +
+                    "<p class=\"text-sm text-slate-500 mt-1 font-medium leading-relaxed\">" + cat.desc + "</p>" +
+                    "</div>";
+                if (cat.type === "static") {
+                    contentHTML += "<div class=\"mt-2 bg-slate-50 rounded-xl p-3 text-center border border-slate-100\">" +
+                        "<p class=\"text-xs text-slate-500 font-medium\"><i class=\"ph-fill ph-info\"></i> " + cat.note + "</p></div>";
+                } else {
+                    var votedUserId = state.myVotes["cat_" + cat.id];
+                    if (votedUserId) {
+                        var votedUser = state.allUsers.find(function(u) { return u.id === votedUserId; });
+                        if (votedUser) {
+                            contentHTML += "<div class=\"mt-2 bg-brand-50 border border-brand-100 rounded-xl p-3 flex items-center justify-between shadow-inner\">" +
+                                "<div class=\"flex items-center gap-3\">" +
+                                "<img src=\"" + votedUser.image + "\" data-name=\"" + votedUser.nickname + "\" onerror=\"window.handleImageError(this)\" loading=\"lazy\" referrerpolicy=\"no-referrer\" class=\"w-12 h-12 rounded-full object-cover border-2 border-white shadow-sm\">" +
+                                "<div>" +
+                                "<p class=\"text-[10px] text-brand-600 font-bold mb-0.5 tracking-wider\">ท่านโหวตให้:</p>" +
+                                "<p class=\"font-bold text-slate-800 text-sm\">" + votedUser.nickname + "</p>" +
+                                "</div></div>" +
+                                "<button onclick=\"openModal(" + cat.id + ")\" class=\"text-brand-600 bg-white border border-brand-200 px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm hover:shadow-md active:scale-95\">เปลี่ยน</button></div>";
+                        }
+                    } else {
+                        contentHTML += "<button onclick=\"openModal(" + cat.id + ")\" class=\"mt-2 w-full border-2 border-dashed border-slate-300 rounded-xl py-4 text-slate-500 font-bold hover:bg-brand-50 hover:border-brand-400 hover:text-brand-600 transition-all flex flex-col items-center gap-1.5 active:scale-95 bg-white\">" +
+                            "<i class=\"ph ph-user-plus text-2xl\"></i>" +
+                            "<span class=\"text-sm\">กดเพื่อเลือกเพื่อน</span></button>";
+                    }
+                }
+                card.innerHTML += contentHTML;
+                container.appendChild(card);
+            });
+        }
+
+        function openModal(catId) {
+            state.currentSelectingCat = catId;
+            var cat = CATEGORIES.find(function(c) { return c.id === catId; });
+            document.getElementById("modalCatName").innerText = "หมวด: " + cat.title;
+            document.getElementById("modalCatDesc").innerText = cat.desc;
+            document.getElementById("searchInput").value = "";
+            renderModalUsers("");
+            document.getElementById("studentModal").classList.remove("hide");
+            setTimeout(function() { document.getElementById("modalContent").classList.remove("translate-y-full"); }, 10);
+        }
+
+        function closeModal() {
+            document.getElementById("modalContent").classList.add("translate-y-full");
+            setTimeout(function() { document.getElementById("studentModal").classList.add("hide"); state.currentSelectingCat = null; }, 300);
+        }
+
+        function renderModalUsers(searchTerm) {
+            var grid = document.getElementById("modalUsersGrid");
+            grid.innerHTML = "";
+            var term = searchTerm.toLowerCase();
+            var filteredUsers = state.allUsers.filter(function(u) {
+                if (u.id === state.currentUser.id) return false; 
+                return u.nickname.toLowerCase().includes(term) || u.name.toLowerCase().includes(term);
+            });
+            if (filteredUsers.length === 0) {
+                grid.innerHTML = "<div class=\"col-span-4 text-center py-8 text-slate-400 text-sm font-bold\">ไม่พบรายชื่อเพื่อน</div>";
+                return;
+            }
+            filteredUsers.forEach(function(user) {
+                var isSelected = state.myVotes["cat_" + state.currentSelectingCat] === user.id;
+                var div = document.createElement("div");
+                div.className = "flex flex-col items-center p-1.5 rounded-xl cursor-pointer transition-all active:scale-90 border-2 " + (isSelected ? "border-brand-500 bg-brand-50 shadow-sm" : "border-transparent hover:bg-slate-50");
+                div.onclick = function() { state.myVotes["cat_" + state.currentSelectingCat] = user.id; closeModal(); renderCategories(); };
+                div.innerHTML = "<div class=\"relative mb-1.5\">" +
+                    "<img src=\"" + user.image + "\" data-name=\"" + user.nickname + "\" onerror=\"window.handleImageError(this)\" loading=\"lazy\" referrerpolicy=\"no-referrer\" class=\"w-16 h-16 rounded-full object-cover border border-slate-200 shadow-sm\">" +
+                    (isSelected ? "<div class=\"absolute -bottom-1 -right-1 bg-brand-600 text-white rounded-full p-0.5 border border-white\"><i class=\"ph-bold ph-check text-[10px]\"></i></div>" : "") +
+                    "</div><p class=\"text-xs font-bold text-slate-800 text-center truncate w-full\">" + user.nickname + "</p>";
+                grid.appendChild(div);
+            });
+        }
+
+        function filterUsers() { renderModalUsers(document.getElementById("searchInput").value); }
+
+        async function confirmSubmit() {
+            var votedCount = Object.keys(state.myVotes).length;
+            if(votedCount === 0) { Swal.fire("ระงับการส่ง", "กรุณาโหวตให้เพื่อนอย่างน้อย 1 หมวด", "warning"); return; }
+            var swalResult = await Swal.fire({
+                title: "ยืนยันการส่งผล?",
+                text: "โหวตไปแล้ว " + votedCount + " รางวัล ท่านสามารถกลับมาแก้ไขได้จนกว่าจะปิดระบบ",
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonColor: "#10b981",
+                confirmButtonText: "ตกลง ส่งผลเลย",
+                cancelButtonText: "ตรวจสอบอีกครั้ง"
+            });
+            if (swalResult.isConfirmed) {
+                showLoader("กำลังบันทึกลงฐานข้อมูล");
+                try {
+                    var res = await runGas("submitVotes", state.currentUser.id, state.myVotes);
+                    hideLoader();
+                    if(res.success) Swal.fire("สำเร็จ!", "บันทึกผลโหวตของท่านเรียบร้อยแล้ว", "success");
+                    else Swal.fire("ผิดพลาด", res.message, "error");
+                } catch(e) { hideLoader(); Swal.fire("ผิดพลาด", "เซิร์ฟเวอร์ขัดข้อง กรุณาลองใหม่", "error"); }
+            }
+        }
+
+        function switchTab(tab) {
+            var btnVote = document.getElementById("tabVote");
+            var btnLead = document.getElementById("tabLeaderboard");
+            if (tab === "vote") {
+                btnVote.className = "flex-1 py-2 text-sm font-bold rounded-lg bg-white text-brand-600 shadow-sm transition-all duration-200";
+                btnLead.className = "flex-1 py-2 text-sm font-bold rounded-lg text-white hover:bg-white/10 transition-all duration-200";
+                document.getElementById("dashboardView").classList.remove("hide");
+                document.getElementById("leaderboardView").classList.add("hide");
+            } else {
+                btnLead.className = "flex-1 py-2 text-sm font-bold rounded-lg bg-white text-brand-600 shadow-sm transition-all duration-200";
+                btnVote.className = "flex-1 py-2 text-sm font-bold rounded-lg text-white hover:bg-white/10 transition-all duration-200";
+                document.getElementById("dashboardView").classList.add("hide");
+                document.getElementById("leaderboardView").classList.remove("hide");
+                loadLeaderboard();
+            }
+        }
+
+        async function loadLeaderboard() {
+            showLoader("กำลังรวบรวมคะแนนล่าสุด");
+            try {
+                var data = await runGas("getLeaderboard");
+                renderLeaderboard(data);
+            } catch(e) { hideLoader(); Swal.fire("ผิดพลาด", "ไม่สามารถดึงข้อมูลคะแนนได้", "error"); }
+            hideLoader();
+        }
+
+        function renderLeaderboard(data) {
+            var container = document.getElementById("leaderboardContainer");
+            var announce = document.getElementById("revealAnnouncement");
+            container.innerHTML = "";
+            var revealTime = new Date('2026-05-07T20:00:00');
+            var now = new Date();
+            var isRevealed = now >= revealTime;
+
+            if (!isRevealed) {
+                announce.classList.remove("hide");
+                startCountdown(); // เริ่มระบบนับถอยหลัง
+            } else {
+                announce.classList.add("hide");
+                if(countdownInterval) clearInterval(countdownInterval); // ยกเลิกการนับถอยหลังถ้าถึงเวลาแล้ว
+            }
+
+            CATEGORIES.forEach(function(cat) {
+                if (cat.type === "static") return;
+                var catScores = data["cat_" + cat.id] || [];
+                var card = document.createElement("div");
+                card.className = "glass-card rounded-2xl p-5 border border-slate-100 shadow-sm";
+                var html = "<h3 class=\"font-bold text-slate-800 text-lg mb-4 flex items-center gap-2\">" +
+                    "<i class=\"ph-fill ph-ranking text-brand-500 text-xl\"></i> " + cat.id + ". " + cat.title + "</h3>";
+                if (catScores.length === 0) {
+                    html += "<div class=\"py-6 text-center text-slate-400 font-medium text-sm\"><p>ยังไม่มีผู้ได้รับโหวตในหมวดนี้</p></div>";
+                } else {
+                    html += "<div class=\"space-y-3\">";
+                    catScores.forEach(function(score, index) {
+                        var rankStyle = index === 0 ? "bg-amber-50 border-amber-200" : (index === 1 ? "bg-slate-50 border-slate-200" : "bg-orange-50/50 border-orange-100");
+                        var rankIcon = "<span class=\"text-lg font-bold w-6 text-center " + (index === 0 ? "text-amber-500" : "text-slate-400") + "\">" + (index + 1) + "</span>";
+                        var safeImageUrl = window.cleanImageUrl(score.image);
+                        var blurClass = isRevealed ? "" : "blur-result";
+                        html += "<div class=\"flex items-center justify-between p-2 rounded-xl border " + rankStyle + "\">" +
+                            "<div class=\"flex items-center gap-3\">" + rankIcon +
+                            "<div class=\"" + blurClass + " flex items-center gap-3\">" +
+                                "<img src=\"" + safeImageUrl + "\" data-name=\"" + score.nickname + "\" onerror=\"window.handleImageError(this)\" referrerpolicy=\"no-referrer\" class=\"w-10 h-10 rounded-full object-cover border border-white shadow-sm\">" +
+                                "<span class=\"font-bold text-slate-800 text-sm\">" + score.nickname + "</span>" +
+                            "</div></div>" +
+                            "<div class=\"bg-white px-3 py-1 rounded-lg shadow-sm border border-slate-100 text-xs font-bold text-brand-600\">" +
+                            score.count + " โหวต</div></div>";
+                    });
+                    html += "</div>";
+                }
+                card.innerHTML = html;
+                container.appendChild(card);
+            });
+        }
     </script>
-  </body>
+</body>
 </html>
